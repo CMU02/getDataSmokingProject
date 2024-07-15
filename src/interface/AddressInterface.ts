@@ -9,7 +9,7 @@ export interface getAddressProp {
 
 export interface addressProps {
     road_address : roadAddressProps | undefined;
-    address : normalAddressProps | undefined;
+    // address : normalAddressProps | undefined;
 }
 
 interface roadAddressProps {
@@ -24,6 +24,7 @@ interface roadAddressProps {
     building_name? : string;
     zone_no? : string;
 }
+
 interface normalAddressProps {
     address_name? : string;
     region_1depth_name? : string;

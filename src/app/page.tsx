@@ -31,7 +31,19 @@ export default function Home() {
     const [polygon, setPolygon] = useState<kakao.maps.Polygon>();
     const [paths, setPaths] = useState<Path[]>([]);
     const [mousePosition, setMousePosition] = useState({lat: 0, lng: 0});
-    const [math, setMath] = useState<number>()
+    
+    const [index, setIndex] = useState<number>(0);
+    const [division, setDivision] = useState<string>('');
+    const [implicit, setImplicit] = useState<string>('');
+
+    const [data, setData] = useState<{
+      address: addressProps[];
+      address_position: { lat: number; lng: number } | undefined;
+      paths: Path[];
+      division: string | undefined;
+      implicit: string | undefined;
+    }>();
+
 
     const getLocationInfo = (_map: kakao.maps.Map, mouseEvent : kakao.maps.event.MouseEvent) => {
         const latlng = mouseEvent.latLng
@@ -44,9 +56,6 @@ export default function Home() {
         if (status === kakao.maps.services.Status.OK) {
             setAddress(result);
         }
-    }
-    const onChangeMode = () => {
-        setMode(!mode);
     }
     const handleClick = (_map : kakao.maps.Map, mouseEvent : kakao.maps.event.MouseEvent) => {
         if (!isDrawing) {
@@ -64,51 +73,90 @@ export default function Home() {
     const handleDoubleClick = (_map : kakao.maps.Map, mouseEvent : kakao.maps.event.MouseEvent) => {
         setIsDrawing(false)
     }
+    const onImplicitChange = (e : React.ChangeEvent<HTMLInputElement>) => {
+        let currentValue = e.target.value
+        if (currentValue === "yes") {
+            setImplicit("yes")
+        } else {
+            setImplicit("no")
+        }
+    }
+
+    const onSaveData = async() => {
+        setData({ address, address_position : position, paths, division, implicit });
+        setIndex(index + 1)
+        setTimeout(() => {
+            localStorage.setItem(`data${index}`, JSON.stringify(data))
+            alert("Save Data")
+        }, 2500)
+    }
+
+    console.log(division)
 
     return (
-        <>
-            <Map
-                center={{lat: 37.39432911172592, lng: 126.95693953605208}}
-                isPanto={true}
-                style={{width:'100%', height: '500px'}}
-                level={3}
-                zoomable={true}
-                onClick={mode ? getLocationInfo : handleClick}
-                onDoubleClick={handleDoubleClick}
-                onMouseMove={handleMouseMove}
-            >
-                <MapMarker position={position ?? {lat: 37.39432911172592, lng: 126.95693953605208}} />
-                <DrawingField isDrawing={isDrawing} paths={paths} setPolygon={setPolygon} polygon={polygon} mousePosition={mousePosition}/>
-            </Map>
-            <div>
-                <button onClick={onChangeMode}>영역 지정하기</button>
-                <button onClick={onChangeMode}>해당 위치 주소 값 가져오기</button><br />
-                현재 모드 : {mode ? <div>주소 값 가져오기 중</div> : <div>영역 지정하는 중</div>}
-            </div>
-            <div>
-                <h3>영역 좌표 값</h3>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Index</th>
-                            <th>Latitude (위도)</th>
-                            <th>Longitude (경도)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {
-                        paths.map((path, index) => (
-                            <tr key={index}>
-                                <td>{index}</td>
-                                <td>{path.lat}</td>
-                                <td>{path.lng}</td>
-                            </tr>
-                        ))
-                    }
-                    </tbody>
-                </table>
-            </div>
-            <GetAddress address={address[0]} position={position}></GetAddress>
-        </>
+      <>
+        <Map
+          center={{ lat: 37.39432911172592, lng: 126.95693953605208 }}
+          isPanto={true}
+          style={{ width: "100%", height: "415px" }}
+          level={3}
+          zoomable={true}
+          onClick={mode ? getLocationInfo : handleClick}
+          onDoubleClick={handleDoubleClick}
+          onMouseMove={handleMouseMove}
+        >
+          <MapMarker
+            position={
+              position ?? { lat: 37.39432911172592, lng: 126.95693953605208 }
+            }
+          />
+          <DrawingField
+            isDrawing={isDrawing}
+            paths={paths}
+            setPolygon={setPolygon}
+            polygon={polygon}
+            mousePosition={mousePosition}
+          />
+        </Map>
+        <div>
+          <button onClick={() => setMode(!mode)}>영역 지정하기</button>
+          <button onClick={() => setMode(!mode)}>
+            해당 위치 주소 값 가져오기
+          </button>
+          <br />
+          현재 모드 : {mode ? <div>주소 값 가져오기 중</div> : <div>영역 지정하는 중</div>}
+        </div>
+        <div>
+          <h3>영역 좌표 값</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Index</th>
+                <th>Latitude (위도)</th>
+                <th>Longitude (경도)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {paths.map((path, index) => (
+                <tr key={index}>
+                  <td>{index}</td>
+                  <td>{path.lat}</td>
+                  <td>{path.lng}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <GetAddress address={address[0]} position={position}></GetAddress>
+        구분 : <input type="text" value={division} onChange={(e) => {
+            setDivision(e.target.value)
+        }}/>
+        <br />
+        암묵적 흡연 장소 여부 :{" "}
+        <input type="radio" value={"yes"} name="implicit" onChange={onImplicitChange} />Yes
+        <input type="radio" value={"no"} name="implicit" onChange={onImplicitChange} />No
+        <br />
+        <button onClick={onSaveData}>저장</button>
+      </>
     );
 }

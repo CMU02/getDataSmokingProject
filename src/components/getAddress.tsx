@@ -23,16 +23,16 @@ export default function GetAddress({address, position} : getAddressProp) {
     const [rZoneNo, setRZoneNo] = useState<string>();
 
     // 일반 주소
-    const [nAddressName, setNAddressName] = useState<string>();
-    const [nMountain_yn, setNMountain_yn] = useState<string>();
-    const [nMainAddressNo, setNMainAddressNo] = useState<string>();
-    const [nSubAddressNo, setNSubAddressNo] = useState<string>();
-    const [nZipCode, setNZipCode] = useState<string>();
+    // const [nAddressName, setNAddressName] = useState<string>();
+    // const [nMountain_yn, setNMountain_yn] = useState<string>();
+    // const [nMainAddressNo, setNMainAddressNo] = useState<string>();
+    // const [nSubAddressNo, setNSubAddressNo] = useState<string>();
+    // const [nZipCode, setNZipCode] = useState<string>();
 
 
     useEffect(() => {
         const road_address = address?.road_address
-        const normal_address = address?.address
+        // const normal_address = address?.address
 
         // 도로명 주소 setter
         setRAddressName(road_address?.address_name)
@@ -43,11 +43,11 @@ export default function GetAddress({address, position} : getAddressProp) {
         setRZoneNo(road_address?.zone_no)
 
         // 일반 주소 setter
-        setNAddressName(normal_address?.address_name);
-        setNMountain_yn(normal_address?.mountain_yn)
-        setNMainAddressNo(normal_address?.main_address_no)
-        setNSubAddressNo(normal_address?.sub_address_no)
-        setNZipCode(normal_address?.zip_code)
+        // setNAddressName(normal_address?.address_name);
+        // setNMountain_yn(normal_address?.mountain_yn)
+        // setNMainAddressNo(normal_address?.main_address_no)
+        // setNSubAddressNo(normal_address?.sub_address_no)
+        // setNZipCode(normal_address?.zip_code)
 
     }, [address])
 
