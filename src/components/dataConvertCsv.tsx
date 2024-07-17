@@ -26,8 +26,6 @@ export default function DataConvertCsv() {
         getDataToLocalStorage();
     }, [])
 
-    console.log(data)
-
     const generateCsv = () => {
         const csvData1 = data.map(item => ({
             address_idx : item.address_idx,
