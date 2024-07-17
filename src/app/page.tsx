@@ -26,7 +26,6 @@ export default function Home() {
 
     const [dayTime, setDayTime] = useState<string>('');
 
-
     const [data, setData] = useState<{
         address_idx: string;
         address: addressProps[];

@@ -3,8 +3,6 @@ import Papa from 'papaparse';
 import { saveAs } from 'file-saver';
 import { useEffect, useState } from 'react';
 import { DataConvertCsvProps } from '@/interface/DataConvertCsvInterface';
-import build from 'next/dist/build';
-import path from 'path';
  
 export default function DataConvertCsv() {
     const [data, setData] = useState<DataConvertCsvProps[]>([]);
@@ -12,16 +10,14 @@ export default function DataConvertCsv() {
     const getDataToLocalStorage = () => {
         const keys = Object.keys(localStorage);
         const dataKeys = keys.filter((key) => key.startsWith("data"));
+        const storedData: DataConvertCsvProps[] = dataKeys
+            .filter((key) => localStorage.getItem(key) !== 'undefined')
+            .map((key) => {
+                return JSON.parse(localStorage.getItem(key) as string);
+            })
 
-        const storedData: DataConvertCsvProps[] = dataKeys.map(
-            (key) => {
-            return JSON.parse(localStorage.getItem(key) || "{}");
-            }
-        );
         setData(storedData);
     }
-
-
     useEffect(() => {
         getDataToLocalStorage();
     }, [])
