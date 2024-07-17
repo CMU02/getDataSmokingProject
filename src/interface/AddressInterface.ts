@@ -9,7 +9,7 @@ export interface getAddressProp {
 
 export interface addressProps {
     road_address : roadAddressProps | undefined;
-    // address : normalAddressProps | undefined;
+    address : normalAddressProps | undefined;
 }
 
 interface roadAddressProps {
