@@ -51,7 +51,6 @@ export default function DataConvertCsv() {
         const blob2 = new Blob([csv2], { type: "text/csv;charset=utf-8" });
 
         saveAs(blob1, "data1.csv");
-
         saveAs(blob2, "data2.csv");
     };
 
@@ -59,6 +58,15 @@ export default function DataConvertCsv() {
         <div>
             <button onClick={getDataToLocalStorage}>데이터 가져오기</button>
             <button onClick={generateCsv}>데이터 추출하기</button>
+            {data.map((item, index) => (
+                <div key={index}>
+                    {item.address_idx} <br />
+                    {item.address[0].road_address?.address_name} <br />                
+                </div>
+            ),
+        )}
+
+
         </div>
     )
 }
