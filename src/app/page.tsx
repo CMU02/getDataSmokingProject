@@ -9,7 +9,7 @@ import DataConvertCsv from '@/components/dataConvertCsv';
 import dayjs from 'dayjs';
 
 export default function Home() {
-    const APP_KEY : string = process.env.NEXT_PUBLIC_KAKAO_API_KEY || '';
+    const APP_KEY : string = "6cf24fc76a6d5ae29260b2a99b27b49a";
     const [loading, error] = useKakaoLoader({appkey : APP_KEY, libraries: ['services', "drawing", "clusterer"]});
 
     const [position, setPosition] = useState<{lat: number, lng: number}>()
