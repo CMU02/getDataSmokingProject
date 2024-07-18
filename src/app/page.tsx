@@ -86,6 +86,7 @@ export default function Home() {
         }, 1000)
         setTimeout(() => {
             localStorage.setItem(`data${dayTime}`, JSON.stringify(data))
+            sessionStorage.setItem(`data${dayTime}`, JSON.stringify(data))
             alert("Save Data")
         }, 1000)
     }
