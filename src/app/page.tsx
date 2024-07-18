@@ -8,6 +8,7 @@ import { Path } from "@/interface/polygonMethodInterface";
 import DataConvertCsv from '@/components/dataConvertCsv';
 import dayjs from 'dayjs';
 import ShowAreaPaths from '@/components/showAreaPaths';
+import { stat } from 'fs';
 
 export default function Home() {
     const APP_KEY : string = "6cf24fc76a6d5ae29260b2a99b27b49a";
@@ -26,6 +27,16 @@ export default function Home() {
 
     const [dayTime, setDayTime] = useState<string>('');
 
+    const [center, setCenter] = useState({lat: 37.39432911172592, lng: 126.95693953605208});
+    const [searchAddress, setSearchAddress] = useState<string>('');
+
+    const inputBuildingName = (e : React.ChangeEvent<HTMLInputElement>) => {
+      setAddress((prev) => {
+        return [{...prev[0], road_address: {...prev[0].road_address, building_name: e.target.value}}]
+      })
+    }
+
+
     const getLocationInfo = (_map: kakao.maps.Map, mouseEvent : kakao.maps.event.MouseEvent) => {
         const latlng = mouseEvent.latLng
         const geocoder = new kakao.maps.services.Geocoder();
@@ -37,6 +48,17 @@ export default function Home() {
         if (status === kakao.maps.services.Status.OK) {
             setAddress(result);
         }
+    }
+    const SearchAddress = () => {
+      const geocoder = new kakao.maps.services.Geocoder();
+      let callback = (result: any, status: string) => {
+        if (status === kakao.maps.services.Status.OK) {
+          const newSearch = result[0]
+          setCenter({ lat: newSearch.y, lng: newSearch.x });
+        }
+      }
+
+      geocoder.addressSearch(searchAddress, callback);
     }
     const handleClick = (_map : kakao.maps.Map, mouseEvent : kakao.maps.event.MouseEvent) => {
         if (!isDrawing) {
@@ -88,8 +110,12 @@ export default function Home() {
 
     return (
       <>
+        <div>
+          <input type="text" onChange={(e) => setSearchAddress(e.target.value)} />
+          <button onClick={SearchAddress}>주소 검색하기</button>
+        </div>
         <Map
-          center={{ lat: 37.39432911172592, lng: 126.95693953605208 }}
+          center={center}
           isPanto={true}
           style={{ width: "100%", height: "415px" }}
           level={3}
@@ -97,12 +123,14 @@ export default function Home() {
           onClick={mode ? getLocationInfo : handleClick}
           onDoubleClick={handleDoubleClick}
           onMouseMove={handleMouseMove}
+
         >
           <MapMarker
             position={
-              position ?? { lat: 37.39432911172592, lng: 126.95693953605208 }
+              position ?? center
             }
           />
+          <MapMarker position={center} />
           <DrawingField
             isDrawing={isDrawing}
             paths={paths}
@@ -121,7 +149,7 @@ export default function Home() {
         </div>
         <h3>현재 날짜 및 시간 : {dayTime}</h3>
         <ShowAreaPaths paths={paths} />
-        <GetAddress address={address[0]} position={position}></GetAddress>
+        <GetAddress address={address[0]} position={position} inputBuildingName={inputBuildingName}></GetAddress>
         구분 : <input type="text" value={division} onChange={(e) => {setDivision(e.target.value)}}/>
         <br />
         암묵적 흡연 장소 여부 :

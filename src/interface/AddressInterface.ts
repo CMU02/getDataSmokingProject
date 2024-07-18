@@ -5,6 +5,7 @@ import {
 export interface getAddressProp {
     address: addressProps |undefined;
     position: {lat:number, lng:number} | undefined;
+    inputBuildingName: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export interface addressProps {

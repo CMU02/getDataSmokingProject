@@ -9,7 +9,7 @@ import {
 
 
 
-export default function GetAddress({address, position} : getAddressProp) {
+export default function GetAddress({address, position, inputBuildingName} : getAddressProp) {
     return (
         <div>
             <div>
@@ -22,7 +22,7 @@ export default function GetAddress({address, position} : getAddressProp) {
                 주소 : {address?.road_address?.address_name || ''} <br/>
                 건물 메인 번호 : {address?.road_address?.main_building_no || ''} <br/>
                 건물 서브 번호 : {address?.road_address?.sub_building_no || ''} <br/>
-                건물 이름 : {address?.road_address?.building_name || ''} <br/>
+                건물 이름 : <input type="text" value={address?.road_address?.building_name} onChange={inputBuildingName}/> <br/>
                 우편번호 : {address?.road_address?.zone_no} <br />
             </div>
         </div>
