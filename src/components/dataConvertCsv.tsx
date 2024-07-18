@@ -58,13 +58,6 @@ export default function DataConvertCsv() {
         <div>
             <button onClick={getDataToLocalStorage}>데이터 가져오기</button>
             <button onClick={generateCsv}>데이터 추출하기</button>
-            {data.map((item, index) => (
-                <div key={index}>
-                    {item.address_idx} <br />
-                    {item.address[0].road_address?.address_name} <br />                
-                </div>
-            ),
-        )}
         </div>
     )
 }

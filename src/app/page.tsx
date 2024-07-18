@@ -1,5 +1,5 @@
 "use client"
-import { DrawingManager, Map, MapMarker, useKakaoLoader} from 'react-kakao-maps-sdk';
+import { Map, MapMarker, useKakaoLoader} from 'react-kakao-maps-sdk';
 import React, { useEffect, useState } from "react";
 import GetAddress from "@/components/getAddress";
 import DrawingField from "@/components/drawingField";
@@ -7,34 +7,24 @@ import { addressProps } from "@/interface/AddressInterface";
 import { Path } from "@/interface/polygonMethodInterface";
 import DataConvertCsv from '@/components/dataConvertCsv';
 import dayjs from 'dayjs';
+import ShowAreaPaths from '@/components/showAreaPaths';
 
 export default function Home() {
     const APP_KEY : string = "6cf24fc76a6d5ae29260b2a99b27b49a";
     const [loading, error] = useKakaoLoader({appkey : APP_KEY, libraries: ['services', "drawing", "clusterer"]});
 
-    const [position, setPosition] = useState<{lat: number, lng: number}>()
-    const [address, setAddress] = useState<addressProps[]>([]);
-    const [mode, setMode] = useState(true);
-
     const [isDrawing, setIsDrawing] = useState(false);
     const [polygon, setPolygon] = useState<kakao.maps.Polygon>();
     const [paths, setPaths] = useState<Path[]>([]);
     const [mousePosition, setMousePosition] = useState({lat: 0, lng: 0});
-    
+
+    const [position, setPosition] = useState<{lat: number, lng: number}>({lat: 0, lng: 0});
+    const [address, setAddress] = useState<addressProps[]>([]);
+    const [mode, setMode] = useState(true);
     const [division, setDivision] = useState<string>('');
     const [implicit, setImplicit] = useState<string>('');
 
     const [dayTime, setDayTime] = useState<string>('');
-
-    const [data, setData] = useState<{
-        address_idx: string;
-        address: addressProps[];
-        address_position: { lat: number; lng: number } | undefined;
-        paths: Path[];
-        division: string | undefined;
-        implicit: string | undefined;
-    }>();
-
 
     const getLocationInfo = (_map: kakao.maps.Map, mouseEvent : kakao.maps.event.MouseEvent) => {
         const latlng = mouseEvent.latLng
@@ -74,28 +64,23 @@ export default function Home() {
     }
 
     const onSaveData = () => {
-        setTimeout(() => {
-            setData({
-                address_idx : dayTime,
-                address,
-                address_position: position,
-                paths,
-                division,
-                implicit
-            })
-        }, 1000)
-        setTimeout(() => {
-            localStorage.setItem(`data${dayTime}`, JSON.stringify(data))
-            sessionStorage.setItem(`data${dayTime}`, JSON.stringify(data))
-            alert("Save Data")
-        }, 1000)
+        const newData = {
+            address_idx: dayTime,
+            address,
+            address_position: position,
+            paths,
+            division,
+            implicit
+        }
+
+        localStorage.setItem(`data${dayTime}`, JSON.stringify(newData));
+        alert("저장되었습니다.")
     }
 
     useEffect(() => {
         const dayTimer = setInterval(() => {
             setDayTime(dayjs().format('YYYY-MM-DD HH:mm:ss'))
         }, 1000);
-
         return () => {
             clearInterval(dayTimer);
         }
@@ -135,38 +120,16 @@ export default function Home() {
           현재 모드 : {mode ? <div>주소 값 가져오기 중</div> : <div>영역 지정하는 중</div>}
         </div>
         <h3>현재 날짜 및 시간 : {dayTime}</h3>
-        <div>
-          <h3>영역 좌표 값</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>Index</th>
-                <th>Latitude (위도)</th>
-                <th>Longitude (경도)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {paths.map((path, index) => (
-                <tr key={index}>
-                  <td>{index}</td>
-                  <td>{path.lat}</td>
-                  <td>{path.lng}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <ShowAreaPaths paths={paths} />
         <GetAddress address={address[0]} position={position}></GetAddress>
-        구분 : <input type="text" value={division} onChange={(e) => {
-            setDivision(e.target.value)
-        }}/>
+        구분 : <input type="text" value={division} onChange={(e) => {setDivision(e.target.value)}}/>
         <br />
-        암묵적 흡연 장소 여부 :{" "}
+        암묵적 흡연 장소 여부 :
         <input type="radio" value={"yes"} name="implicit" onChange={onImplicitChange} />Yes
         <input type="radio" value={"no"} name="implicit" onChange={onImplicitChange} />No
         <br />
         <button onClick={onSaveData}>저장</button>
-
+        <a href="/showdata">저장된 데이터 확인하기</a>
         <div>
             <DataConvertCsv />
         </div>
